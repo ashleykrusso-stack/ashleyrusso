@@ -6,28 +6,34 @@
 <style>
 /* Layout: one calm column, one thing on screen at a time, actions anchored under the prompt */
 :root {
-  --bg: #eef1f4;
+  --bg: #fff3f8;
   --surface: #ffffff;
-  --ink: #1f2a33;
-  --muted: #5d6b77;
-  --line: #d5dce3;
-  --accent: #2f6f73;
+  --ink: #2a1838;
+  --muted: #6e5a7a;
+  --line: #f3d2e4;
+  --accent: #e8146f;
   --accent-ink: #ffffff;
-  --accent-soft: #dcebea;
+  --accent-soft: #ffd9ea;
+  --glow: #ffc21a;
+  --glow-soft: #fff0b8;
+  --mint: #12c99a;
+  --blue: #3f6cff;
   --display: "Young Serif", Georgia, "Times New Roman", serif;
   --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --radius: 14px;
+  --radius: 16px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #151b20; --surface: #1d252c; --ink: #e6ecf0; --muted: #9aa8b3;
-    --line: #2e3a44; --accent: #7cc2c2; --accent-ink: #0f1a1c; --accent-soft: #23393b;
+    --bg: #1b0f25; --surface: #291737; --ink: #fdebf5; --muted: #c8abd3;
+    --line: #45294f; --accent: #ff5ca0; --accent-ink: #1b0f25; --accent-soft: #4d1c3d;
+    --glow: #ffd03d; --glow-soft: #4a3a12; --mint: #3be8b5; --blue: #7d9bff;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #151b20; --surface: #1d252c; --ink: #e6ecf0; --muted: #9aa8b3;
-  --line: #2e3a44; --accent: #7cc2c2; --accent-ink: #0f1a1c; --accent-soft: #23393b;
+  --bg: #1b0f25; --surface: #291737; --ink: #fdebf5; --muted: #c8abd3;
+  --line: #45294f; --accent: #ff5ca0; --accent-ink: #1b0f25; --accent-soft: #4d1c3d;
+  --glow: #ffd03d; --glow-soft: #4a3a12; --mint: #3be8b5; --blue: #7d9bff;
   color-scheme: dark;
 }
 
@@ -47,38 +53,84 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  padding-block: 2.5rem 1.5rem;
-  gap: 1.5rem;
+  padding-block: 1.25rem 1.5rem;
+  gap: 1.25rem;
 }
-.screen { display: flex; flex-direction: column; gap: 1.5rem; flex: 1; }
+.topbar { display: flex; justify-content: space-between; align-items: center; min-height: 2rem; }
+.brand { font-family: var(--display); font-size: 1rem; color: var(--muted); }
+.link-btn { font: inherit; font-size: .9rem; background: none; border: 0; color: var(--accent); cursor: pointer; padding: .35rem .2rem; font-weight: 600; }
+.link-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+main { flex: 1; display: flex; }
+.screen { display: flex; flex-direction: column; gap: 1.4rem; flex: 1; width: 100%; }
 .screen.enter { animation: rise .35s ease both; }
 @keyframes rise { from { opacity: .4; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .screen.enter { animation: none; } }
 
 .eyebrow {
   font-size: .8rem; letter-spacing: .08em; text-transform: uppercase;
-  color: var(--muted); font-weight: 600;
+  color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums;
 }
 h1 {
   font-family: var(--display); font-weight: 400;
   font-size: clamp(1.9rem, 6vw, 2.4rem); line-height: 1.15;
   margin: 0; text-wrap: balance;
 }
+h2 { font-size: .95rem; font-weight: 600; margin: 0; }
 p { margin: 0; }
 .lede { color: var(--muted); }
+
+/* Stepping stones: one per step in the task */
+.stones { display: flex; align-items: center; gap: 0; }
+.stone {
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid var(--line); background: var(--surface); flex: none;
+}
+.stone.done { background: var(--mint); border-color: var(--mint); }
+.stone.done:nth-of-type(3n+2) { background: var(--glow); border-color: var(--glow); }
+.stone.done:nth-of-type(3n) { background: var(--blue); border-color: var(--blue); }
+.stone.now { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 4px var(--accent-soft); }
+.path { height: 3px; border-radius: 2px; flex: 1; max-width: 2.5rem; background: var(--line); }
+.path.done { background: var(--mint); }
 
 .task-card {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 1.5rem 1.25rem;
+  padding: 1.4rem 1.25rem;
+  display: flex; flex-direction: column; gap: .75rem;
+  box-shadow: 0 6px 0 var(--accent-soft);
 }
-.step-text {
-  font-family: var(--display); font-size: 1.45rem; line-height: 1.3; text-wrap: balance;
-}
+.step-text { font-family: var(--display); font-size: 1.45rem; line-height: 1.3; text-wrap: balance; }
 .task-ref { font-size: .9rem; color: var(--muted); }
 
-label.field-label { font-weight: 600; font-size: .95rem; }
+details.why { font-size: .95rem; }
+details.why summary { cursor: pointer; color: var(--accent); font-weight: 600; list-style: none; }
+details.why summary::-webkit-details-marker { display: none; }
+details.why summary::before { content: "+ "; }
+details.why[open] summary::before { content: "– "; }
+details.why p { color: var(--muted); padding-top: .35rem; }
+
+.pieces { list-style: none; margin: 0; padding: .25rem 0 0; display: flex; flex-direction: column; gap: .4rem; border-top: 1px solid var(--line); }
+.pieces li { padding-top: .4rem; }
+.pieces label { display: flex; gap: .65rem; align-items: flex-start; cursor: pointer; }
+.pieces input { width: 1.15rem; height: 1.15rem; margin-top: .2rem; accent-color: var(--accent); flex: none; }
+.pieces input:checked + span { color: var(--muted); text-decoration: line-through; }
+
+.tools { display: flex; gap: .5rem; flex-wrap: wrap; }
+.tool {
+  font: inherit; font-size: .9rem; font-weight: 500;
+  padding: .45rem .9rem; border-radius: 999px;
+  border: 1px dashed var(--line); background: transparent; color: var(--ink); cursor: pointer;
+}
+.tool:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.timer { display: flex; align-items: center; gap: .75rem; font-size: .95rem; color: var(--muted); }
+.timer svg { width: 44px; height: 44px; flex: none; transform: rotate(-90deg); }
+.timer .track { fill: none; stroke: var(--line); stroke-width: 4; }
+.timer .fill { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+.timer .time { font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 600; }
+
+label.field-label, .field-label { font-weight: 600; font-size: .95rem; }
 textarea, input[type="text"] {
   width: 100%; box-sizing: border-box;
   font: inherit; color: var(--ink);
@@ -91,12 +143,15 @@ textarea:focus, input[type="text"]:focus { outline: 2px solid var(--accent); out
 
 .chips { display: flex; gap: .5rem; flex-wrap: wrap; }
 .chip {
-  font: inherit; font-weight: 500;
-  padding: .55rem 1.1rem; border-radius: 999px;
+  font: inherit; font-weight: 500; font-size: .95rem;
+  padding: .5rem 1rem; border-radius: 999px;
   border: 1px solid var(--line); background: var(--surface); color: var(--ink);
   cursor: pointer; font-variant-numeric: tabular-nums;
 }
-.chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); }
+.chip.small { font-size: .88rem; padding: .4rem .85rem; }
+.chip[aria-pressed="true"] { background: var(--glow); border-color: var(--glow); color: #2a1838; font-weight: 600; }
+.chip.small:hover { border-color: var(--accent); background: var(--accent-soft); }
+.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .actions { display: flex; flex-direction: column; gap: .6rem; margin-top: auto; }
 .row { display: flex; gap: .6rem; flex-wrap: wrap; }
@@ -107,133 +162,263 @@ textarea:focus, input[type="text"]:focus { outline: 2px solid var(--accent); out
   border: 1px solid var(--line); background: var(--surface); color: var(--ink);
   cursor: pointer; text-align: center;
 }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); box-shadow: 0 4px 0 var(--glow); transition: transform .12s ease, box-shadow .12s ease; }
+.btn.primary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--glow); }
 .btn.quiet { background: transparent; border-color: transparent; color: var(--muted); font-weight: 500; padding: .6rem; }
 .btn:disabled { opacity: .45; cursor: default; }
-.btn:focus-visible, .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn.ready { animation: nudge 1.6s ease-in-out 2; }
+@keyframes nudge { 50% { box-shadow: 0 0 0 6px var(--accent-soft); } }
 
 .choices { display: flex; flex-direction: column; gap: .5rem; }
 .choice {
   font: inherit; text-align: left;
   padding: .85rem 1rem; border-radius: var(--radius);
-  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
-  cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer;
 }
 .choice:hover { border-color: var(--accent); }
 .choice:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.note {
-  font-size: .95rem; color: var(--muted);
-  border-left: 3px solid var(--accent-soft); padding-left: .75rem;
-}
+.note { font-size: .95rem; color: var(--ink); background: var(--glow-soft); border-radius: 10px; padding: .6rem .85rem; }
 .done-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .35rem; }
 .done-list li { color: var(--muted); font-size: .95rem; padding-left: 1.4rem; position: relative; }
-.done-list li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
+.done-list li::before { content: "✓"; position: absolute; left: 0; color: var(--mint); font-weight: 700; }
+.done-list .when { font-size: .8rem; opacity: .85; white-space: nowrap; }
+
+/* Saved tasks on the home screen */
+.saved { display: flex; flex-direction: column; gap: .75rem; }
+.saved-item { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.1rem 1rem; display: flex; flex-direction: column; gap: .6rem; }
+.saved-item .title { font-weight: 600; }
+.saved-item .next { font-family: var(--display); font-size: 1.1rem; line-height: 1.35; }
+.saved-item .meta { font-size: .85rem; color: var(--muted); }
+.saved-item .row .btn { padding: .7rem 1rem; }
+
+/* Celebration */
+.burst { position: relative; width: 84px; height: 84px; margin: .25rem 0; }
+.burst .check {
+  position: absolute; inset: 14px; border-radius: 50%;
+  background: var(--mint); color: #10241e;
+  box-shadow: 0 0 0 6px var(--glow-soft);
+  display: grid; place-items: center; font-size: 1.6rem; font-weight: 700;
+  animation: pop .45s cubic-bezier(.3,1.6,.5,1) both;
+}
+.burst i {
+  position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px;
+  border-radius: 50%; background: var(--glow);
+  animation: fly .8s ease-out .1s both;
+}
+.burst i:nth-child(3n+2) { background: var(--accent); width: 6px; height: 6px; margin: -3px; }
+.burst i:nth-child(3n) { background: var(--blue); }
+@keyframes pop { from { transform: scale(.3); } to { transform: scale(1); } }
+@keyframes fly {
+  from { transform: rotate(var(--a)) translateY(0); opacity: 1; }
+  to { transform: rotate(var(--a)) translateY(-44px); opacity: 0; }
+}
+
+/* Breathing */
+.breath-wrap { display: grid; place-items: center; padding: 1.5rem 0; }
+.breath {
+  width: 140px; height: 140px; border-radius: 50%;
+  background: radial-gradient(circle, var(--glow-soft), var(--accent-soft)); border: 3px solid var(--accent);
+  display: grid; place-items: center; color: var(--ink); font-weight: 600;
+  animation: breathe 8s ease-in-out infinite;
+}
+@keyframes breathe { 0%, 100% { transform: scale(.72); } 50% { transform: scale(1); } }
 
 footer {
-  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
   font-size: .8rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: .9rem;
 }
 footer button { font: inherit; background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: .25rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .screen.enter, .btn.ready, .burst .check, .burst i { animation: none; }
+  .burst i { display: none; }
+  .breath { animation: none; transform: scale(.9); }
+  .timer .fill { transition: none; }
+}
 </style>
 
 <div class="app">
+  <div class="topbar">
+    <span class="brand">Just this step</span>
+    <button type="button" class="link-btn" id="home-link" hidden>Your tasks</button>
+  </div>
   <main id="view" aria-live="polite"></main>
   <footer>
-    <span>Prototype · example task: a clothing return</span>
+    <span>Prototype · progress is saved in this browser only</span>
     <button type="button" id="reset">Start over</button>
   </footer>
 </div>
 
 <script>
 (function () {
-  const STORE_KEY = "just-this-step:v1";
+  const STORE_KEY = "just-this-step:v2";
 
-  // Step ladders. Each step has a main version and progressively smaller versions,
-  // plus a short phrase used when offering it as the next step.
+  // Each plan is a ladder of steps. A step has a main wording and smaller wordings
+  // ("sizes"), a short phrase for offering it next, and a reason it comes now.
   const PLANS = {
-    returns: [
+    returns: { label: "Return some clothes", match: /return|refund|exchange|send (it|them) back/i, steps: [
       { next: "put the clothes in one spot",
-        sizes: ["Put the clothes you want to return in one spot.",
-                "Pick up one item you want to return.",
-                "Look around for one item you want to return. Just look."] },
+        why: "Having everything in one place means the rest of the steps don't start with a search.",
+        sizes: ["Put the clothes you want to return in one spot.", "Pick up one item you want to return.", "Look around for one item you want to return. Just look."] },
       { next: "check the return instructions",
-        sizes: ["Check the return instructions.",
-                "Find the order email or receipt.",
-                "Search your email for the store's name."] },
+        why: "The instructions tell you the deadline and whether you need a label, so you only do this once.",
+        sizes: ["Check the return instructions.", "Find the order email or receipt.", "Search your email for the store's name."] },
       { next: "get the return label",
-        sizes: ["Print or save the return label.",
-                "Open the return page from the order email.",
-                "Find the “Start a return” link in the email."] },
+        why: "The label is usually the only thing standing between a bag of clothes and a finished return.",
+        sizes: ["Print or save the return label.", "Open the return page from the order email.", "Find the “Start a return” link in the email."] },
       { next: "pack the clothes",
-        sizes: ["Pack the clothes in a bag or box.",
-                "Find a bag or box they'll fit in.",
-                "Put one item in a bag."] },
+        why: "Once it's packed, the last step is just carrying it out the door.",
+        sizes: ["Pack the clothes in a bag or box.", "Find a bag or box they'll fit in.", "Put one item in a bag."] },
       { next: "look up where to drop it off",
-        sizes: ["Look up where to drop off the package.",
-                "Check the return instructions for drop-off options.",
-                "Put the package by the door so it's ready."] }
-    ],
-    general: [
+        why: "Knowing exactly where to go turns “someday” into a stop on your way somewhere.",
+        sizes: ["Look up where to drop off the package.", "Check the return instructions for drop-off options.", "Put the package by the door so it's ready."] }
+    ]},
+    bill: { label: "Pay a bill", match: /\bbill\b|\bpay\b|invoice|\brent\b|parking ticket/i, steps: [
+      { next: "find the bill",
+        why: "You can't pay what you can't see. Finding it is most of the dread.",
+        sizes: ["Find the bill and the amount due.", "Search your email for the company's name.", "Think of where this bill usually shows up."] },
+      { next: "open the payment page",
+        why: "Getting logged in is the fiddly part. After that it's a few taps.",
+        sizes: ["Log in to the payment page.", "Find the “Pay” link on the bill.", "Open the company's website."] },
+      { next: "make the payment",
+        why: "This is the step that actually stops the reminders.",
+        sizes: ["Pay the amount due.", "Enter your payment details.", "Check the amount and the due date. That's all."] },
+      { next: "save the confirmation",
+        why: "A screenshot now saves a phone call later if anything goes wrong.",
+        sizes: ["Save or screenshot the confirmation.", "Write down the confirmation number.", "Take one screenshot."] }
+    ]},
+    email: { label: "Reply to an email", match: /e-?mail|reply|respond|write back|inbox|message/i, steps: [
+      { next: "open the email",
+        why: "Seeing the email is usually less scary than imagining it.",
+        sizes: ["Open the email you need to answer.", "Search your inbox for the sender's name.", "Open your email app. Don't read anything else."] },
+      { next: "write a rough first line",
+        why: "A rough sentence is easier to fix than a blank page.",
+        sizes: ["Write one rough sentence of your reply.", "Type “Hi” and their name.", "Tap Reply and leave it blank for now."] },
+      { next: "say the main thing",
+        why: "Most replies only need one clear answer. Everything else is optional.",
+        sizes: ["Write the one thing they need to know.", "Write it as a messy bullet point.", "Write three words about your answer."] },
+      { next: "send it",
+        why: "Sent and a little imperfect beats perfect and still waiting.",
+        sizes: ["Read it once, then send it.", "Fix typos only, then send.", "Send it as it is. It's good enough."] }
+    ]},
+    appointment: { label: "Book an appointment", match: /appointment|\bbook\b|schedule|dentist|doctor|\bcall\b|haircut/i, steps: [
+      { next: "find the number or booking page",
+        why: "Having the number ready removes the first excuse to put it off.",
+        sizes: ["Find the phone number or booking page.", "Search for the office's name.", "Write down who you need to book with."] },
+      { next: "pick a few times that work",
+        why: "Knowing your times ahead makes the call or form quick.",
+        sizes: ["Pick two or three times that work for you.", "Open your calendar to next week.", "Pick one day that could work."] },
+      { next: "call or book online",
+        why: "With the number and your times ready, this part is short.",
+        sizes: ["Call or book online.", "Write what you'll say: your name, the reason, your times.", "Put the number on screen, ready to tap."] },
+      { next: "add it to your calendar",
+        why: "Writing it down means you don't have to keep remembering it.",
+        sizes: ["Add the appointment to your calendar.", "Write the date on a sticky note.", "Screenshot the confirmation."] }
+    ]},
+    laundry: { label: "Do the laundry", match: /laundry|washing|wash (my|the)|fold/i, steps: [
+      { next: "gather the laundry",
+        why: "One pile is easier to face than clothes in five places.",
+        sizes: ["Gather the dirty clothes into one pile.", "Pick up the clothes on the floor.", "Put one item in the hamper."] },
+      { next: "start a load",
+        why: "Once the machine is running, it does the work for you.",
+        sizes: ["Start one load in the washer.", "Put the clothes in the washer.", "Carry the basket to the washer."] },
+      { next: "move it to the dryer",
+        why: "Moving it soon keeps it from needing a second wash.",
+        sizes: ["Move the load to the dryer or a drying rack.", "Open the washer and take out one armful.", "Set a reminder to move it later."] },
+      { next: "fold or hang it",
+        why: "Putting it away means you won't be digging through a basket tomorrow.",
+        sizes: ["Fold or hang the clean clothes.", "Fold just the shirts.", "Hang up one thing."] }
+    ]},
+    tidy: { label: "Tidy my room", match: /clean|tidy|declutter|mess|organi[sz]e|my room|my desk/i, steps: [
+      { next: "clear one surface",
+        why: "One clear surface gives you somewhere to put things and shows quick progress.",
+        sizes: ["Clear one surface, like a desk or nightstand.", "Clear one corner of that surface.", "Pick up three things from the floor."] },
+      { next: "gather the trash",
+        why: "Trash is the easiest thing to decide about. It makes the room feel lighter fast.",
+        sizes: ["Gather the trash into one bag.", "Grab a bag.", "Throw away one thing."] },
+      { next: "put things back where they live",
+        why: "Things that already have a home take no decisions to put away.",
+        sizes: ["Put back everything that already has a home.", "Put away five things.", "Put away one thing."] },
+      { next: "make a “decide later” pile",
+        why: "You don't have to decide about everything today. A pile keeps it contained.",
+        sizes: ["Put everything left into one “decide later” pile.", "Find a box or basket for the pile.", "Put one unsure thing in the pile."] }
+    ]},
+    general: { label: null, match: null, steps: [
       { next: "gather what you need",
-        sizes: ["Gather what you need for this in one spot.",
-                "Pick up one thing you'll need.",
-                "Go to where this task happens. That's all."] },
+        why: "Starting with what you need means you won't stop halfway to go looking.",
+        sizes: ["Gather what you need for this in one spot.", "Pick up one thing you'll need.", "Go to where this task happens. That's all."] },
       { next: "do the first small piece",
-        sizes: ["Do the first small piece, even roughly.",
-                "Do just the first minute of it.",
-                "Write down what the first piece is."] },
+        why: "Starting roughly is still starting. You can tidy it up later.",
+        sizes: ["Do the first small piece, even roughly.", "Do just the first minute of it.", "Write down what the first piece is."] },
       { next: "note what's left",
-        sizes: ["Write a one-line note about what's left.",
-                "Write down the very next thing.",
-                "Say out loud what comes next."] }
-    ]
+        why: "A short note means future you doesn't have to figure it out again.",
+        sizes: ["Write a one-line note about what's left.", "Write down the very next thing.", "Say out loud what comes next."] }
+    ]}
   };
+  const PLAN_ORDER = ["returns", "bill", "email", "appointment", "laundry", "tidy"];
 
   const STUCK_REASONS = [
-    { id: "find",   label: "I can't find what I need",
+    { id: "much",     label: "It feels like too much" },
+    { id: "first",    label: "I'm not sure what to do first" },
+    { id: "find",     label: "I can't find what I need",
       reply: "Look in one place for it. Only one place, then come back." },
-    { id: "much",   label: "It feels like too much",      reply: null }, // use smallest size
-    { id: "first",  label: "I'm not sure what to do first", reply: null },
-    { id: "energy", label: "I don't have the energy right now",
-      reply: "Go stand where the task is. You don't have to do anything there." }
+    { id: "energy",   label: "I don't have the energy right now",
+      reply: "Go stand where the task is. You don't have to do anything there." },
+    { id: "overwhelm", label: "I'm feeling overwhelmed" }
+  ];
+
+  const CHEERS = [
+    "That counts.",
+    "One down. That's real progress.",
+    "You did the hardest part, which was starting.",
+    "That's done, and it stays done.",
+    "Look at you, moving it forward."
   ];
 
   const view = document.getElementById("view");
+  const homeLink = document.getElementById("home-link");
 
-  function load() {
-    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || null; } catch (e) { return null; }
+  // ---- storage ----
+  function loadData() {
+    try {
+      const d = JSON.parse(localStorage.getItem(STORE_KEY));
+      if (d && Array.isArray(d.tasks) && Array.isArray(d.history)) return d;
+    } catch (e) {}
+    return { tasks: [], history: [], lastVisit: null };
   }
-  function save(s) {
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) {}
+  function saveData() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
   }
-  function clear() {
-    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
-  }
+
+  let data = loadData();
+  let cur = null;         // the task being worked on
+  let timer = null;       // { end, total }
+  let draft = { task: "I need to return these clothes.", minutes: 5 };
 
   function planFor(task) {
-    return /return|refund|send (it|them) back|exchange/i.test(task) ? "returns" : "general";
+    return PLAN_ORDER.find(k => PLANS[k].match.test(task)) || "general";
   }
-
-  let state = {
-    task: "I need to return these clothes.",
-    minutes: 5,
-    plan: "returns",
-    stepIndex: 0,
-    size: 0,
-    override: null, // a custom instruction from the "stuck" flow
-    done: []
-  };
-
-  function currentStep() {
-    return PLANS[state.plan][state.stepIndex];
-  }
+  function stepsOf(t) { return PLANS[t.plan].steps; }
+  function currentStep() { return stepsOf(cur)[cur.stepIndex]; }
   function currentText() {
-    if (state.override) return state.override;
+    if (cur.override) return cur.override;
     const s = currentStep();
-    return s.sizes[Math.min(state.size, s.sizes.length - 1)];
+    return s.sizes[Math.min(cur.size, s.sizes.length - 1)];
+  }
+  function persistCur() {
+    cur.updatedAt = Date.now();
+    const i = data.tasks.findIndex(t => t.id === cur.id);
+    if (i >= 0) data.tasks[i] = { ...cur }; else data.tasks.unshift({ ...cur });
+    saveData();
+  }
+  function dropTask(id) {
+    data.tasks = data.tasks.filter(t => t.id !== id);
+    saveData();
   }
 
+  // ---- helpers ----
   function el(html) {
     const t = document.createElement("template");
     t.innerHTML = html.trim();
@@ -242,29 +427,139 @@ footer button { font: inherit; background: none; border: 0; color: var(--muted);
   function esc(s) {
     return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
+  function ago(ts) {
+    const m = Math.round((Date.now() - ts) / 60000);
+    if (m < 1) return "just now";
+    if (m < 60) return `${m} min ago`;
+    const h = Math.round(m / 60);
+    if (h < 24) return `${h} hour${h === 1 ? "" : "s"} ago`;
+    const d = Math.round(h / 24);
+    return d === 1 ? "yesterday" : `${d} days ago`;
+  }
   function render(content, focusSel) {
     view.innerHTML = "";
     const wrap = document.createElement("section");
     wrap.className = "screen enter";
     wrap.appendChild(content);
     view.appendChild(wrap);
+    homeLink.hidden = !(data.tasks.length || data.history.length);
     const f = focusSel && wrap.querySelector(focusSel);
     if (f) f.focus({ preventScroll: true });
     window.scrollTo(0, 0);
+    tickTimer();
+  }
+  function stonesHtml(t, justDone) {
+    const n = stepsOf(t).length;
+    let out = "";
+    for (let i = 0; i < n; i++) {
+      const done = i < t.stepIndex;
+      if (i) out += `<span class="path${done ? " done" : ""}"></span>`;
+      out += `<span class="stone${done ? " done" : ""}${i === t.stepIndex && !justDone ? " now" : ""}"></span>`;
+    }
+    return `<div class="stones" role="img" aria-label="Step ${Math.min(t.stepIndex + 1, n)} of ${n}">${out}</div>`;
   }
 
-  // Screen 1
+  // ---- gentle timer ----
+  function timerHtml() {
+    if (!timer) {
+      return `<button type="button" class="tool" id="timer-start">Start a gentle ${cur.minutes}-minute timer</button>`;
+    }
+    return `<div class="timer" id="timer">
+        <svg viewBox="0 0 44 44" aria-hidden="true"><circle class="track" cx="22" cy="22" r="18"/><circle class="fill" cx="22" cy="22" r="18" stroke-dasharray="113.1" stroke-dashoffset="0"/></svg>
+        <span><span class="time" id="timer-time"></span> <span id="timer-msg">left. No rush.</span></span>
+        <button type="button" class="link-btn" id="timer-stop">Stop</button>
+      </div>`;
+  }
+  function wireTimer() {
+    const start = document.getElementById("timer-start");
+    if (start) start.addEventListener("click", () => {
+      timer = { total: cur.minutes * 60000, end: Date.now() + cur.minutes * 60000 };
+      start.replaceWith(el(timerHtml()));
+      wireTimer();
+      tickTimer();
+    });
+    const stop = document.getElementById("timer-stop");
+    if (stop) stop.addEventListener("click", () => {
+      timer = null;
+      document.getElementById("timer").replaceWith(el(timerHtml()));
+      wireTimer();
+    });
+  }
+  function tickTimer() {
+    const t = document.getElementById("timer-time");
+    if (!timer || !t) return;
+    const left = Math.max(0, timer.end - Date.now());
+    const s = Math.ceil(left / 1000);
+    t.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+    document.querySelector("#timer .fill").setAttribute("stroke-dashoffset", String(113.1 * (1 - left / timer.total)));
+    if (left === 0) document.getElementById("timer-msg").textContent = "Time's up. Stopping here is fine, and so is keeping going.";
+  }
+  setInterval(tickTimer, 1000);
+
+  // ---- Home: where you left off ----
+  function showHome() {
+    const last = data.lastVisit;
+    data.lastVisit = Date.now();
+    saveData();
+    let nudge = "Pick one to keep going, or start something new.";
+    if (last) {
+      const days = Math.floor((Date.now() - last) / 86400000);
+      if (days >= 1) nudge = `It's been ${days === 1 ? "a day" : days + " days"}. No catching up needed. Everything is where you left it.`;
+    }
+    const tasks = data.tasks.slice().sort((a, b) => b.updatedAt - a.updatedAt);
+    const recent = data.history.slice(-6).reverse();
+    render(el(`
+      <h1>${tasks.length ? "Here's where you left off." : "Nice work lately."}</h1>
+      <p class="lede">${tasks.length ? esc(nudge) : "Nothing is waiting on you. Start something new whenever you like."}</p>
+      ${tasks.length ? `<div class="saved">${tasks.map(t => {
+        const st = stepsOf(t)[t.stepIndex];
+        return `<div class="saved-item">
+          <span class="title">${esc(t.task)}</span>
+          ${stonesHtml(t)}
+          <span class="next">Next: ${esc(st ? st.sizes[0] : "Nothing left.")}</span>
+          <span class="meta">${t.done.length} step${t.done.length === 1 ? "" : "s"} done · saved ${ago(t.updatedAt)}</span>
+          <div class="row">
+            <button type="button" class="btn primary" data-pick="${t.id}">Pick up here</button>
+            <button type="button" class="btn quiet" data-drop="${t.id}">Let this one go</button>
+          </div>
+        </div>`;
+      }).join("")}</div>` : ""}
+      ${recent.length ? `<div class="stack"><h2>What you've done lately</h2>
+        <ul class="done-list">${recent.map(h => `<li>${esc(h.text)} <span class="when">· ${ago(h.at)}</span></li>`).join("")}</ul></div>` : ""}
+      <div class="actions">
+        <button type="button" class="btn${tasks.length ? "" : " primary"}" id="new">Start something new</button>
+      </div>
+    `), "[data-pick], #new");
+    view.querySelectorAll("[data-pick]").forEach(b => b.addEventListener("click", () => {
+      cur = { ...data.tasks.find(t => t.id === b.dataset.pick), size: 0, override: null };
+      timer = null;
+      showStep("Welcome back. Here's the next small thing.");
+    }));
+    view.querySelectorAll("[data-drop]").forEach(b => b.addEventListener("click", () => {
+      const item = b.closest(".saved-item");
+      item.innerHTML = `<span class="meta">Let go. That's a decision too.</span>
+        <div class="row"><button type="button" class="btn quiet" data-undo>Undo</button><button type="button" class="btn" data-confirm>Okay</button></div>`;
+      item.querySelector("[data-undo]").addEventListener("click", showHome);
+      item.querySelector("[data-confirm]").addEventListener("click", () => { dropTask(b.dataset.drop); showHome(); });
+    }));
+    document.getElementById("new").addEventListener("click", () => { draft.task = ""; showStart(); });
+  }
+
+  // ---- Screen 1 ----
   function showStart() {
     render(el(`
       <h1>What's on your mind?</h1>
       <div class="stack">
         <label class="field-label" for="task">The thing you keep meaning to do</label>
-        <textarea id="task" rows="3" placeholder="I need to…">${esc(state.task)}</textarea>
+        <textarea id="task" rows="3" placeholder="I need to…">${esc(draft.task)}</textarea>
+        <div class="chips" aria-label="Examples">
+          ${PLAN_ORDER.map(k => `<button type="button" class="chip small" data-eg="${k}">${esc(PLANS[k].label)}</button>`).join("")}
+        </div>
       </div>
       <div class="stack">
         <span class="field-label" id="time-label">How much time do you have?</span>
         <div class="chips" role="group" aria-labelledby="time-label">
-          ${[2, 5, 15].map(m => `<button type="button" class="chip" data-min="${m}" aria-pressed="${m === state.minutes}">${m} minutes</button>`).join("")}
+          ${[2, 5, 15].map(m => `<button type="button" class="chip" data-min="${m}" aria-pressed="${m === draft.minutes}">${m} minutes</button>`).join("")}
         </div>
       </div>
       <div class="actions">
@@ -273,35 +568,53 @@ footer button { font: inherit; background: none; border: 0; color: var(--muted);
     `));
     const task = document.getElementById("task");
     const go = document.getElementById("go");
-    const sync = () => { go.disabled = !task.value.trim(); };
+    const sync = () => { go.disabled = !task.value.trim(); draft.task = task.value; };
     task.addEventListener("input", sync);
     sync();
-    view.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
-      state.minutes = Number(b.dataset.min);
-      view.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c === b)));
+    view.querySelectorAll("[data-eg]").forEach(b => b.addEventListener("click", () => {
+      const label = PLANS[b.dataset.eg].label;
+      task.value = "I need to " + label.charAt(0).toLowerCase() + label.slice(1).replace(/\bmy\b/, "my") + ".";
+      sync();
+      task.focus();
+    }));
+    view.querySelectorAll("[data-min]").forEach(b => b.addEventListener("click", () => {
+      draft.minutes = Number(b.dataset.min);
+      view.querySelectorAll("[data-min]").forEach(c => c.setAttribute("aria-pressed", String(c === b)));
     }));
     go.addEventListener("click", () => {
-      state.task = task.value.trim();
-      state.plan = planFor(state.task);
-      state.stepIndex = 0; state.size = 0; state.override = null; state.done = [];
-      // With only 2 minutes, start one size smaller.
-      if (state.minutes === 2) state.size = 1;
-      showStep();
+      const text = task.value.trim();
+      cur = {
+        id: "t" + Date.now().toString(36),
+        task: text, minutes: draft.minutes, plan: planFor(text),
+        stepIndex: 0, size: draft.minutes === 2 ? 1 : 0, override: null,
+        done: [], updatedAt: Date.now()
+      };
+      timer = null;
+      showStep(draft.minutes === 2 ? "Two minutes is enough. Here's a small one." : null);
     });
   }
 
-  // Screen 2
+  // ---- Screen 2 ----
   function showStep(note) {
     const s = currentStep();
-    const canShrink = !state.override && state.size < s.sizes.length - 1;
+    const n = stepsOf(cur).length;
+    const canShrink = !cur.override && cur.size < s.sizes.length - 1;
+    const why = cur.override ? "Smaller is still progress. This gets you moving without deciding anything big." : s.why;
     render(el(`
-      <span class="eyebrow">About ${state.minutes} minutes</span>
+      <span class="eyebrow">Step ${cur.stepIndex + 1} of ${n} · about ${cur.minutes} minutes</span>
+      ${stonesHtml(cur)}
       <h1>Just this for now.</h1>
-      <div class="task-card stack">
+      <div class="task-card">
         <p class="step-text">${esc(currentText())}</p>
-        <p class="task-ref">For: ${esc(state.task)}</p>
+        <p class="task-ref">For: ${esc(cur.task)}</p>
+        <details class="why"><summary>Why this step?</summary><p>${esc(why)}</p></details>
+        <div id="pieces-slot"></div>
       </div>
       ${note ? `<p class="note">${esc(note)}</p>` : ""}
+      <div class="tools">
+        ${cur.override ? "" : `<button type="button" class="tool" id="pieces-btn">Break it into pieces</button>`}
+        ${timerHtml()}
+      </div>
       <div class="actions">
         <button type="button" class="btn primary" id="done">Done</button>
         <div class="row">
@@ -310,20 +623,41 @@ footer button { font: inherit; background: none; border: 0; color: var(--muted);
         </div>
       </div>
     `), "#done");
+    wireTimer();
+    const pb = document.getElementById("pieces-btn");
+    if (pb) pb.addEventListener("click", () => {
+      const pieces = s.sizes.slice().reverse();
+      document.getElementById("pieces-slot").replaceWith(el(`
+        <ul class="pieces">${pieces.map((p, i) => `<li><label><input type="checkbox" id="piece-${i}"><span>${esc(p)}</span></label></li>`).join("")}</ul>`));
+      pb.remove();
+      const boxes = view.querySelectorAll(".pieces input");
+      boxes.forEach(b => b.addEventListener("change", () => {
+        const all = [...boxes].every(x => x.checked);
+        document.getElementById("done").classList.toggle("ready", all);
+      }));
+      boxes[0].focus();
+    });
     document.getElementById("done").addEventListener("click", () => {
-      state.done.push(currentText());
-      state.stepIndex += 1;
-      state.size = 0; state.override = null;
+      const text = currentText();
+      cur.done.push(text);
+      data.history.push({ text, task: cur.task, at: Date.now() });
+      if (data.history.length > 50) data.history.shift();
+      cur.stepIndex += 1;
+      cur.size = 0; cur.override = null;
+      if (cur.stepIndex >= n) { dropTask(cur.id); saveData(); return showFinished(); }
+      persistCur();
       showProgress();
     });
     document.getElementById("smaller").addEventListener("click", () => {
-      state.size += 1;
-      showStep();
+      cur.size += 1;
+      showStep("Smaller is fine. Here you go.");
     });
     document.getElementById("stuck").addEventListener("click", showStuck);
   }
 
   function showStuck() {
+    const s = currentStep();
+    const smallest = s.sizes.length - 1;
     render(el(`
       <h1>What's getting in the way?</h1>
       <p class="lede">Pick whatever's closest. There's no wrong answer.</p>
@@ -339,17 +673,12 @@ footer button { font: inherit; background: none; border: 0; color: var(--muted);
         <button type="button" class="btn quiet" id="back">Go back to the step</button>
       </div>
     `));
-    const s = currentStep();
-    const smallest = s.sizes[s.sizes.length - 1];
     view.querySelectorAll(".choice").forEach(b => b.addEventListener("click", () => {
       const r = STUCK_REASONS.find(x => x.id === b.dataset.id);
-      if (r.reply) {
-        state.override = r.reply;
-      } else if (r.id === "first") {
-        state.override = null; state.size = Math.min(state.size + 1, s.sizes.length - 1);
-      } else {
-        state.override = null; state.size = s.sizes.length - 1;
-      }
+      if (r.id === "overwhelm") return showBreathe();
+      if (r.reply) cur.override = r.reply;
+      else if (r.id === "first") { cur.override = null; cur.size = Math.min(cur.size + 1, smallest); }
+      else { cur.override = null; cur.size = smallest; }
       showStep("That's okay. Here's a smaller way in.");
     }));
     const own = document.getElementById("own-text");
@@ -357,21 +686,53 @@ footer button { font: inherit; background: none; border: 0; color: var(--muted);
     own.addEventListener("input", () => { ownGo.disabled = !own.value.trim(); });
     document.getElementById("own").addEventListener("submit", e => {
       e.preventDefault();
-      const said = own.value.trim();
+      const said = own.value.trim().replace(/[.!]+$/, "");
       if (!said) return;
-      state.override = null; state.size = s.sizes.length - 1;
+      cur.override = null; cur.size = smallest;
       showStep(`“${said}.” Got it. Let's start with something that works around that.`);
     });
     document.getElementById("back").addEventListener("click", () => showStep());
   }
 
-  // Screen 3
-  function showProgress() {
-    const next = PLANS[state.plan][state.stepIndex];
-    if (!next) return showFinished();
+  function showBreathe() {
     render(el(`
+      <h1>Let's slow down for a moment.</h1>
+      <p class="lede">Breathe in as the circle grows, and out as it shrinks. Three times is plenty.</p>
+      <div class="breath-wrap"><div class="breath" id="breath">Breathe in</div></div>
+      <div class="actions">
+        <button type="button" class="btn primary" id="ready">I'm ready for something tiny</button>
+        <button type="button" class="btn quiet" id="later">Save it for later</button>
+      </div>
+    `), "#ready");
+    const label = document.getElementById("breath");
+    let inhale = true;
+    const flip = setInterval(() => {
+      if (!document.body.contains(label)) return clearInterval(flip);
+      inhale = !inhale;
+      label.textContent = inhale ? "Breathe in" : "Breathe out";
+    }, 4000);
+    document.getElementById("ready").addEventListener("click", () => {
+      cur.override = null; cur.size = currentStep().sizes.length - 1;
+      showStep("This is the smallest version. It's enough.");
+    });
+    document.getElementById("later").addEventListener("click", () => { persistCur(); showSaved(); });
+  }
+
+  // ---- Screen 3 ----
+  function showProgress() {
+    const next = currentStep();
+    const cheer = CHEERS[(cur.done.length - 1) % CHEERS.length];
+    const angles = [0, 45, 90, 135, 180, 225, 270, 315];
+    render(el(`
+      <div class="burst" aria-hidden="true">
+        ${angles.map(a => `<i style="--a:${a}deg"></i>`).join("")}
+        <span class="check">✓</span>
+      </div>
       <h1>You've made a start.</h1>
-      <p class="lede">Want to ${esc(next.next)} next, or leave it here?</p>
+      <p class="lede">${esc(cheer)}</p>
+      ${stonesHtml(cur)}
+      <ul class="done-list"><li>${esc(cur.done[cur.done.length - 1])}</li></ul>
+      <p>Want to ${esc(next.next)} next, or leave it here?</p>
       <div class="actions">
         <div class="row">
           <button type="button" class="btn primary" id="keep">Keep going</button>
@@ -380,70 +741,55 @@ footer button { font: inherit; background: none; border: 0; color: var(--muted);
       </div>
     `), "#keep");
     document.getElementById("keep").addEventListener("click", () => showStep());
-    document.getElementById("save").addEventListener("click", () => {
-      save({ ...state, savedAt: Date.now() });
-      showSaved();
-    });
+    document.getElementById("save").addEventListener("click", () => { persistCur(); showSaved(); });
   }
 
   function showFinished() {
-    clear();
+    const angles = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330];
     render(el(`
+      <div class="burst" aria-hidden="true">
+        ${angles.map(a => `<i style="--a:${a}deg"></i>`).join("")}
+        <span class="check">✓</span>
+      </div>
       <h1>That's the whole thing.</h1>
-      <p class="lede">Every step for “${esc(state.task)}” is done.</p>
-      <ul class="done-list">${state.done.map(d => `<li>${esc(d)}</li>`).join("")}</ul>
+      <p class="lede">“${esc(cur.task)}” is off your mind now.</p>
+      <ul class="done-list">${cur.done.map(d => `<li>${esc(d)}</li>`).join("")}</ul>
       <div class="actions">
         <button type="button" class="btn primary" id="new">Start something else</button>
+        ${data.tasks.length ? `<button type="button" class="btn" id="home">See your saved tasks</button>` : ""}
       </div>
     `), "#new");
-    document.getElementById("new").addEventListener("click", () => { state.task = ""; showStart(); });
+    timer = null;
+    document.getElementById("new").addEventListener("click", () => { draft.task = ""; showStart(); });
+    const h = document.getElementById("home");
+    if (h) h.addEventListener("click", showHome);
   }
 
   function showSaved() {
+    timer = null;
+    const next = currentStep();
     render(el(`
       <h1>Saved. You can leave it here.</h1>
-      <p class="lede">When you come back, you'll start right where you stopped.</p>
+      <p class="lede">When you come back, you'll start right where you stopped. Next time it's: ${esc(next.sizes[0].replace(/\.$/, "").toLowerCase())}.</p>
       <div class="actions">
-        <button type="button" class="btn" id="return">Come back now (to test the return)</button>
+        <button type="button" class="btn primary" id="return">Come back now (to test the return)</button>
+        <button type="button" class="btn quiet" id="new">Start something else</button>
       </div>
     `), "#return");
-    document.getElementById("return").addEventListener("click", showResume);
+    document.getElementById("return").addEventListener("click", showHome);
+    document.getElementById("new").addEventListener("click", () => { draft.task = ""; showStart(); });
   }
 
-  // Return visit
-  function showResume() {
-    const saved = load() || state;
-    state = { ...state, ...saved };
-    const next = PLANS[state.plan][state.stepIndex];
-    const last = state.done[state.done.length - 1];
-    render(el(`
-      <h1>Here's where you left off.</h1>
-      <div class="task-card stack">
-        <p class="task-ref">${esc(state.task)}</p>
-        ${last ? `<ul class="done-list"><li>${esc(last)}</li></ul>` : ""}
-        <p class="step-text">Next: ${esc(next ? next.sizes[0] : "Nothing left.")}</p>
-      </div>
-      <div class="actions">
-        <button type="button" class="btn primary" id="pickup">Pick up here</button>
-        <button type="button" class="btn quiet" id="fresh">Start something new</button>
-      </div>
-    `), "#pickup");
-    document.getElementById("pickup").addEventListener("click", () => {
-      state.size = 0; state.override = null;
-      next ? showStep() : showFinished();
-    });
-    document.getElementById("fresh").addEventListener("click", () => {
-      clear(); state.task = ""; showStart();
-    });
-  }
-
+  // ---- wiring ----
+  homeLink.addEventListener("click", showHome);
   document.getElementById("reset").addEventListener("click", () => {
-    clear();
-    state = { task: "I need to return these clothes.", minutes: 5, plan: "returns",
-              stepIndex: 0, size: 0, override: null, done: [] };
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    data = { tasks: [], history: [], lastVisit: null };
+    cur = null; timer = null;
+    draft = { task: "I need to return these clothes.", minutes: 5 };
     showStart();
   });
 
-  load() ? showResume() : showStart();
+  data.tasks.length ? showHome() : showStart();
 })();
 </script>
