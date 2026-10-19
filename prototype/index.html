@@ -1,0 +1,449 @@
+<title>Just This Step</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout: one calm column, one thing on screen at a time, actions anchored under the prompt */
+:root {
+  --bg: #eef1f4;
+  --surface: #ffffff;
+  --ink: #1f2a33;
+  --muted: #5d6b77;
+  --line: #d5dce3;
+  --accent: #2f6f73;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcebea;
+  --display: "Young Serif", Georgia, "Times New Roman", serif;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151b20; --surface: #1d252c; --ink: #e6ecf0; --muted: #9aa8b3;
+    --line: #2e3a44; --accent: #7cc2c2; --accent-ink: #0f1a1c; --accent-soft: #23393b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151b20; --surface: #1d252c; --ink: #e6ecf0; --muted: #9aa8b3;
+  --line: #2e3a44; --accent: #7cc2c2; --accent-ink: #0f1a1c; --accent-soft: #23393b;
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.app {
+  max-width: 30rem;
+  margin: 0 auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-block: 2.5rem 1.5rem;
+  gap: 1.5rem;
+}
+.screen { display: flex; flex-direction: column; gap: 1.5rem; flex: 1; }
+.screen.enter { animation: rise .35s ease both; }
+@keyframes rise { from { opacity: .4; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .screen.enter { animation: none; } }
+
+.eyebrow {
+  font-size: .8rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600;
+}
+h1 {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(1.9rem, 6vw, 2.4rem); line-height: 1.15;
+  margin: 0; text-wrap: balance;
+}
+p { margin: 0; }
+.lede { color: var(--muted); }
+
+.task-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.25rem;
+}
+.step-text {
+  font-family: var(--display); font-size: 1.45rem; line-height: 1.3; text-wrap: balance;
+}
+.task-ref { font-size: .9rem; color: var(--muted); }
+
+label.field-label { font-weight: 600; font-size: .95rem; }
+textarea, input[type="text"] {
+  width: 100%; box-sizing: border-box;
+  font: inherit; color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: .9rem 1rem; resize: none;
+}
+textarea:focus, input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.stack { display: flex; flex-direction: column; gap: .6rem; }
+
+.chips { display: flex; gap: .5rem; flex-wrap: wrap; }
+.chip {
+  font: inherit; font-weight: 500;
+  padding: .55rem 1.1rem; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  cursor: pointer; font-variant-numeric: tabular-nums;
+}
+.chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); }
+
+.actions { display: flex; flex-direction: column; gap: .6rem; margin-top: auto; }
+.row { display: flex; gap: .6rem; flex-wrap: wrap; }
+.row > .btn { flex: 1 1 8rem; }
+.btn {
+  font: inherit; font-weight: 600;
+  padding: .95rem 1.2rem; border-radius: var(--radius);
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  cursor: pointer; text-align: center;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.quiet { background: transparent; border-color: transparent; color: var(--muted); font-weight: 500; padding: .6rem; }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn:focus-visible, .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.choices { display: flex; flex-direction: column; gap: .5rem; }
+.choice {
+  font: inherit; text-align: left;
+  padding: .85rem 1rem; border-radius: var(--radius);
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  cursor: pointer;
+}
+.choice:hover { border-color: var(--accent); }
+.choice:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.note {
+  font-size: .95rem; color: var(--muted);
+  border-left: 3px solid var(--accent-soft); padding-left: .75rem;
+}
+.done-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .35rem; }
+.done-list li { color: var(--muted); font-size: .95rem; padding-left: 1.4rem; position: relative; }
+.done-list li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
+
+footer {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  font-size: .8rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: .9rem;
+}
+footer button { font: inherit; background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: .25rem; }
+</style>
+
+<div class="app">
+  <main id="view" aria-live="polite"></main>
+  <footer>
+    <span>Prototype · example task: a clothing return</span>
+    <button type="button" id="reset">Start over</button>
+  </footer>
+</div>
+
+<script>
+(function () {
+  const STORE_KEY = "just-this-step:v1";
+
+  // Step ladders. Each step has a main version and progressively smaller versions,
+  // plus a short phrase used when offering it as the next step.
+  const PLANS = {
+    returns: [
+      { next: "put the clothes in one spot",
+        sizes: ["Put the clothes you want to return in one spot.",
+                "Pick up one item you want to return.",
+                "Look around for one item you want to return. Just look."] },
+      { next: "check the return instructions",
+        sizes: ["Check the return instructions.",
+                "Find the order email or receipt.",
+                "Search your email for the store's name."] },
+      { next: "get the return label",
+        sizes: ["Print or save the return label.",
+                "Open the return page from the order email.",
+                "Find the “Start a return” link in the email."] },
+      { next: "pack the clothes",
+        sizes: ["Pack the clothes in a bag or box.",
+                "Find a bag or box they'll fit in.",
+                "Put one item in a bag."] },
+      { next: "look up where to drop it off",
+        sizes: ["Look up where to drop off the package.",
+                "Check the return instructions for drop-off options.",
+                "Put the package by the door so it's ready."] }
+    ],
+    general: [
+      { next: "gather what you need",
+        sizes: ["Gather what you need for this in one spot.",
+                "Pick up one thing you'll need.",
+                "Go to where this task happens. That's all."] },
+      { next: "do the first small piece",
+        sizes: ["Do the first small piece, even roughly.",
+                "Do just the first minute of it.",
+                "Write down what the first piece is."] },
+      { next: "note what's left",
+        sizes: ["Write a one-line note about what's left.",
+                "Write down the very next thing.",
+                "Say out loud what comes next."] }
+    ]
+  };
+
+  const STUCK_REASONS = [
+    { id: "find",   label: "I can't find what I need",
+      reply: "Look in one place for it. Only one place, then come back." },
+    { id: "much",   label: "It feels like too much",      reply: null }, // use smallest size
+    { id: "first",  label: "I'm not sure what to do first", reply: null },
+    { id: "energy", label: "I don't have the energy right now",
+      reply: "Go stand where the task is. You don't have to do anything there." }
+  ];
+
+  const view = document.getElementById("view");
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || null; } catch (e) { return null; }
+  }
+  function save(s) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) {}
+  }
+  function clear() {
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+  }
+
+  function planFor(task) {
+    return /return|refund|send (it|them) back|exchange/i.test(task) ? "returns" : "general";
+  }
+
+  let state = {
+    task: "I need to return these clothes.",
+    minutes: 5,
+    plan: "returns",
+    stepIndex: 0,
+    size: 0,
+    override: null, // a custom instruction from the "stuck" flow
+    done: []
+  };
+
+  function currentStep() {
+    return PLANS[state.plan][state.stepIndex];
+  }
+  function currentText() {
+    if (state.override) return state.override;
+    const s = currentStep();
+    return s.sizes[Math.min(state.size, s.sizes.length - 1)];
+  }
+
+  function el(html) {
+    const t = document.createElement("template");
+    t.innerHTML = html.trim();
+    return t.content;
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+  function render(content, focusSel) {
+    view.innerHTML = "";
+    const wrap = document.createElement("section");
+    wrap.className = "screen enter";
+    wrap.appendChild(content);
+    view.appendChild(wrap);
+    const f = focusSel && wrap.querySelector(focusSel);
+    if (f) f.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  }
+
+  // Screen 1
+  function showStart() {
+    render(el(`
+      <h1>What's on your mind?</h1>
+      <div class="stack">
+        <label class="field-label" for="task">The thing you keep meaning to do</label>
+        <textarea id="task" rows="3" placeholder="I need to…">${esc(state.task)}</textarea>
+      </div>
+      <div class="stack">
+        <span class="field-label" id="time-label">How much time do you have?</span>
+        <div class="chips" role="group" aria-labelledby="time-label">
+          ${[2, 5, 15].map(m => `<button type="button" class="chip" data-min="${m}" aria-pressed="${m === state.minutes}">${m} minutes</button>`).join("")}
+        </div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn primary" id="go">Help me start</button>
+      </div>
+    `));
+    const task = document.getElementById("task");
+    const go = document.getElementById("go");
+    const sync = () => { go.disabled = !task.value.trim(); };
+    task.addEventListener("input", sync);
+    sync();
+    view.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+      state.minutes = Number(b.dataset.min);
+      view.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c === b)));
+    }));
+    go.addEventListener("click", () => {
+      state.task = task.value.trim();
+      state.plan = planFor(state.task);
+      state.stepIndex = 0; state.size = 0; state.override = null; state.done = [];
+      // With only 2 minutes, start one size smaller.
+      if (state.minutes === 2) state.size = 1;
+      showStep();
+    });
+  }
+
+  // Screen 2
+  function showStep(note) {
+    const s = currentStep();
+    const canShrink = !state.override && state.size < s.sizes.length - 1;
+    render(el(`
+      <span class="eyebrow">About ${state.minutes} minutes</span>
+      <h1>Just this for now.</h1>
+      <div class="task-card stack">
+        <p class="step-text">${esc(currentText())}</p>
+        <p class="task-ref">For: ${esc(state.task)}</p>
+      </div>
+      ${note ? `<p class="note">${esc(note)}</p>` : ""}
+      <div class="actions">
+        <button type="button" class="btn primary" id="done">Done</button>
+        <div class="row">
+          <button type="button" class="btn" id="smaller" ${canShrink ? "" : "disabled"}>Make it smaller</button>
+          <button type="button" class="btn" id="stuck">I'm stuck</button>
+        </div>
+      </div>
+    `), "#done");
+    document.getElementById("done").addEventListener("click", () => {
+      state.done.push(currentText());
+      state.stepIndex += 1;
+      state.size = 0; state.override = null;
+      showProgress();
+    });
+    document.getElementById("smaller").addEventListener("click", () => {
+      state.size += 1;
+      showStep();
+    });
+    document.getElementById("stuck").addEventListener("click", showStuck);
+  }
+
+  function showStuck() {
+    render(el(`
+      <h1>What's getting in the way?</h1>
+      <p class="lede">Pick whatever's closest. There's no wrong answer.</p>
+      <div class="choices">
+        ${STUCK_REASONS.map(r => `<button type="button" class="choice" data-id="${r.id}">${esc(r.label)}</button>`).join("")}
+      </div>
+      <form class="stack" id="own">
+        <label class="field-label" for="own-text">Or say it in your own words</label>
+        <input type="text" id="own-text" placeholder="e.g. I lost the receipt" autocomplete="off">
+        <button type="submit" class="btn" id="own-go" disabled>Tell me</button>
+      </form>
+      <div class="actions">
+        <button type="button" class="btn quiet" id="back">Go back to the step</button>
+      </div>
+    `));
+    const s = currentStep();
+    const smallest = s.sizes[s.sizes.length - 1];
+    view.querySelectorAll(".choice").forEach(b => b.addEventListener("click", () => {
+      const r = STUCK_REASONS.find(x => x.id === b.dataset.id);
+      if (r.reply) {
+        state.override = r.reply;
+      } else if (r.id === "first") {
+        state.override = null; state.size = Math.min(state.size + 1, s.sizes.length - 1);
+      } else {
+        state.override = null; state.size = s.sizes.length - 1;
+      }
+      showStep("That's okay. Here's a smaller way in.");
+    }));
+    const own = document.getElementById("own-text");
+    const ownGo = document.getElementById("own-go");
+    own.addEventListener("input", () => { ownGo.disabled = !own.value.trim(); });
+    document.getElementById("own").addEventListener("submit", e => {
+      e.preventDefault();
+      const said = own.value.trim();
+      if (!said) return;
+      state.override = null; state.size = s.sizes.length - 1;
+      showStep(`“${said}.” Got it. Let's start with something that works around that.`);
+    });
+    document.getElementById("back").addEventListener("click", () => showStep());
+  }
+
+  // Screen 3
+  function showProgress() {
+    const next = PLANS[state.plan][state.stepIndex];
+    if (!next) return showFinished();
+    render(el(`
+      <h1>You've made a start.</h1>
+      <p class="lede">Want to ${esc(next.next)} next, or leave it here?</p>
+      <div class="actions">
+        <div class="row">
+          <button type="button" class="btn primary" id="keep">Keep going</button>
+          <button type="button" class="btn" id="save">Save my place</button>
+        </div>
+      </div>
+    `), "#keep");
+    document.getElementById("keep").addEventListener("click", () => showStep());
+    document.getElementById("save").addEventListener("click", () => {
+      save({ ...state, savedAt: Date.now() });
+      showSaved();
+    });
+  }
+
+  function showFinished() {
+    clear();
+    render(el(`
+      <h1>That's the whole thing.</h1>
+      <p class="lede">Every step for “${esc(state.task)}” is done.</p>
+      <ul class="done-list">${state.done.map(d => `<li>${esc(d)}</li>`).join("")}</ul>
+      <div class="actions">
+        <button type="button" class="btn primary" id="new">Start something else</button>
+      </div>
+    `), "#new");
+    document.getElementById("new").addEventListener("click", () => { state.task = ""; showStart(); });
+  }
+
+  function showSaved() {
+    render(el(`
+      <h1>Saved. You can leave it here.</h1>
+      <p class="lede">When you come back, you'll start right where you stopped.</p>
+      <div class="actions">
+        <button type="button" class="btn" id="return">Come back now (to test the return)</button>
+      </div>
+    `), "#return");
+    document.getElementById("return").addEventListener("click", showResume);
+  }
+
+  // Return visit
+  function showResume() {
+    const saved = load() || state;
+    state = { ...state, ...saved };
+    const next = PLANS[state.plan][state.stepIndex];
+    const last = state.done[state.done.length - 1];
+    render(el(`
+      <h1>Here's where you left off.</h1>
+      <div class="task-card stack">
+        <p class="task-ref">${esc(state.task)}</p>
+        ${last ? `<ul class="done-list"><li>${esc(last)}</li></ul>` : ""}
+        <p class="step-text">Next: ${esc(next ? next.sizes[0] : "Nothing left.")}</p>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn primary" id="pickup">Pick up here</button>
+        <button type="button" class="btn quiet" id="fresh">Start something new</button>
+      </div>
+    `), "#pickup");
+    document.getElementById("pickup").addEventListener("click", () => {
+      state.size = 0; state.override = null;
+      next ? showStep() : showFinished();
+    });
+    document.getElementById("fresh").addEventListener("click", () => {
+      clear(); state.task = ""; showStart();
+    });
+  }
+
+  document.getElementById("reset").addEventListener("click", () => {
+    clear();
+    state = { task: "I need to return these clothes.", minutes: 5, plan: "returns",
+              stepIndex: 0, size: 0, override: null, done: [] };
+    showStart();
+  });
+
+  load() ? showResume() : showStart();
+})();
+</script>
